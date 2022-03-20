@@ -29,4 +29,12 @@ export class CategoryService {
         return this.categories.find()
     }
 
+    async getAllCategoryWithCount(){
+        const categories= await this.categories.find()
+        const categoriesWithCount:CategoryWithCountDto[]=await Promise.all(categories.map<Promise<CategoryWithCountDto>>(async(c)=>{
+            return {name:c.name,count:await this.itemsService.getItemsByCategoryCount(c.name)}
+        }))
+        return categoriesWithCount
+         
+    }
 }

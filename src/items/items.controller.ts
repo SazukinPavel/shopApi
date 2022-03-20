@@ -27,8 +27,13 @@ export class ItemsController {
 
     @Get('categories')
     async getAllCategory(@Query('withCount') withCount:boolean){
+        if(withCount){
+            return this.categoryService.getAllCategoryWithCount()
+        }
         return this.categoryService.getAllCategory()
     }
+
+    
     
     @Get(':id')
     getItemById(@Param('id') id:string){
