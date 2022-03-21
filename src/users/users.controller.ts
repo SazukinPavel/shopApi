@@ -32,7 +32,7 @@ export class UsersController {
     @UseGuards(JwtAuthGuard)
     @Roles('USER')
     @Get('basket')
-    getBasketItems(@Req() req,@Query('limit') limit:number,@Query('allPrice') allPrice:boolean,@Query('page') page:number,@Query('count') count:boolean){
+    async getBasketItems(@Req() req,@Query('limit') limit:number,@Query('allPrice') allPrice:boolean,@Query('page') page:number,@Query('count') count:boolean){
         if(allPrice){
             return this.basketService.getAllPriceUserBasket(req.user as User)
         }
@@ -46,7 +46,7 @@ export class UsersController {
     @Roles('USER')
     @Post('basket')
     addItemToBasket(@Req() req,@Body() dto:CreateBasketItemDto){
-        return this.basketService.addToBasket(req.user as User,dto).then((b)=>{basketItemId:b.id})
+        return this.basketService.addToBasket(req.user as User,dto)
     }
 
     @UseGuards(JwtAuthGuard)

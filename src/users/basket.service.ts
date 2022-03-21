@@ -1,3 +1,4 @@
+import { ItemsService } from './../items/items.service';
 import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import BasketItem from 'src/entitys/basket-item.entity';
@@ -51,11 +52,11 @@ export default class BasketService {
         if(!basketItem){
             throw new HttpException("Item not found in basket",500)
         }
-        if(basketItem.kolvo==1 || all){
-            this.deleteBasketItem(basketItem.id)
+        if(basketItem.kolvo>1 || !all){
+            basketItem.kolvo-=1;
+            return this.basketItems.update(basketItem.id,basketItem)
         }
-        basketItem.kolvo-=1;
-        return this.basketItems.save(basketItem)
+        return this.deleteBasketItem(basketItem.id)
     }
 
     private getBasketItemsByBasket(options:FindManyOptions<BasketItem>){

@@ -1,3 +1,4 @@
+import { HttpException, HttpStatus } from '@nestjs/common';
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Item } from 'src/entitys/item.entity';
@@ -7,6 +8,7 @@ import { ItemsInfoService } from './item-info.service';
 import {v4} from 'uuid';
 import CreateItemInfoDto from './dto/create-itemInfo.dto';
 import CreateItemDto from './dto/create-item.dto';
+import { STATUS_CODES } from 'http';
 
 @Injectable()
 export class ItemsService {
@@ -58,7 +60,11 @@ export class ItemsService {
     }
 
     async getItemsByCategoryCount(category:string){
-        return await this.items.count({where:{category:await this.categories.getCategoryByName(category)}})
+        const count= await this.items.count({where:{category:await this.categories.getCategoryByName(category)}})
+        if(count){
+            return count
+        }
+        throw new HttpException('No items!',HttpStatus.BAD_REQUEST)
     }
 
     async getItemsByCategory(name:string,take:number,page:number){
