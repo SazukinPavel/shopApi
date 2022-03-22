@@ -46,15 +46,24 @@ export default class BasketService {
         return this.basketItems.delete({id})
     }
 
-    async deleteFromBasket(user:User,itemId:string,all:boolean){
+    async deleteOneFromBasket(user:User,itemId:string){
         const basket=await this.getBasketByUserId(user.id)
         const basketItem= await this.basketItems.findOne({where:{basket,item:itemId}})
         if(!basketItem){
             throw new HttpException("Item not found in basket",500)
         }
-        if(basketItem.kolvo>1 || !all){
-            basketItem.kolvo-=1;
-            return this.basketItems.update(basketItem.id,basketItem)
+        if(basketItem.kolvo===1){
+            return this.deleteBasketItem(basketItem.id)
+        }
+        basketItem.kolvo-=1;
+        return this.basketItems.update(basketItem.id,basketItem)
+    }
+
+    async deleteFromBasketByItem(user:User,itemId:string){
+        const basket=await this.getBasketByUserId(user.id)
+        const basketItem= await this.basketItems.findOne({where:{basket,item:itemId}})
+        if(!basketItem){
+            throw new HttpException("Item not found in basket",500)
         }
         return this.deleteBasketItem(basketItem.id)
     }
@@ -96,5 +105,19 @@ export default class BasketService {
             count:items.reduce((sum,bi)=>sum+bi.kolvo,0)
         }
         return dto
+    }
+
+    async getBasketItemByItemId(user:User,itemId:string){
+        const basket=await this.getBasketByUserId(user.id)
+        return this.basketItems.findOne({where:{basket,item:itemId}})
+    }
+
+    async getBasketItemByItemIdKolvo(user:User,itemId:string){
+        const basket=await this.getBasketByUserId(user.id)
+        const basketItem=await this.basketItems.findOne({where:{basket,item:itemId}})
+        if(basketItem){
+            return basketItem.kolvo
+        }
+        return 0
     }
 }

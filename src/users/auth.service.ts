@@ -11,18 +11,13 @@ export default class AuthService{
     constructor(private userService:UsersService,private jwtService:JwtService){}
 
     async login(dto:CreateUserDto){
-        try{
-            const user=await this.validateUser(dto)
-            return {token:this.generateToken(user),user:{name:user.name,id:user.id,role:user.role}}
-        }catch{
-            throw new UnauthorizedException()
-        }
+        const user=await this.validateUser(dto)
+        return {token:this.generateToken(user),user:{name:user.name,id:user.id,role:user.role}}
     }
-
     async registration(dto:CreateUserDto){
         const user=await this.userService.findByNameUser(dto.name)
         if(user){
-            throw new HttpException('User already exists',HttpStatus.BAD_REQUEST)
+            throw new HttpException('Пользователь с таким именем уже существует.',HttpStatus.BAD_REQUEST)
         }
         const hashPasswod=await hash(dto.password,5);
         const newUser=await this.userService.createUser({name:dto.name,password:hashPasswod})
@@ -31,11 +26,14 @@ export default class AuthService{
 
     private async validateUser(dto:CreateUserDto){
         const user=await this.userService.findByNameUser(dto.name)
+        if(!user){
+            throw new UnauthorizedException('Такого пользователя не существует')
+        }
         const passwordEquals=await compare(dto.password,user?.password)
-        if(user && passwordEquals){
+        if(passwordEquals){
             return user
         }
-        throw new UnauthorizedException()
+        throw new UnauthorizedException('Неправильный пароль.')
     }
 
     private generateToken(user:User){

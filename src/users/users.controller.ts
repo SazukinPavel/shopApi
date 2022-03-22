@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Query, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseBoolPipe, Post, Query, Req, UseGuards } from '@nestjs/common';
 import User from 'src/entitys/user.entity';
 import JwtAuthGuard from './auth.guard';
 import AuthService from './auth.service';
@@ -50,10 +50,23 @@ export class UsersController {
     }
 
     @UseGuards(JwtAuthGuard)
-    @Roles('User')
+    @Roles('USER')
+    @Get('basket/:id')
+    getBasketItemByItemId(@Param('id') id:string,@Req() req,@Query('kolvo',ParseBoolPipe) kolvo:boolean){
+        if(kolvo){
+            return this.basketService.getBasketItemByItemIdKolvo(req.user as User,id)
+        }
+        return this.basketService.getBasketItemByItemId(req.user as User,id)
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Roles('USER')
     @Delete('basket/:id')
-    deleteFromBasket(@Param('id') id:string,@Req() req,@Query('all') all:boolean){
-        return this.basketService.deleteFromBasket(req.user as User,id,all)
+    deleteFromBasket(@Param('id') id:string,@Req() req,@Query('all',ParseBoolPipe) all:boolean){
+        if(all){
+            return this.basketService.deleteFromBasketByItem(req.user as User,id)
+        }
+        return this.basketService.deleteOneFromBasket(req.user as User,id)
     }
 
 }
