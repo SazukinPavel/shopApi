@@ -11,7 +11,7 @@ export default class Basket{
     @JoinColumn()
     user:User | string
 
-    @OneToMany(()=>BasketItem,(basketItem)=>basketItem.id)
+    @OneToMany(()=>BasketItem,(basketItem)=>basketItem.id,{cascade:true})
     @JoinColumn()
     items:BasketItem[]
     

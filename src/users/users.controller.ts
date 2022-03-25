@@ -1,4 +1,6 @@
-import { Body, Controller, Delete, Get, Param, ParseBoolPipe, Post, Query, Req, UseGuards } from '@nestjs/common';
+import { UpdateUserDto } from './dto/UpdateUser.dto';
+import { UsersService } from './users.service';
+import { Body, Controller, Delete, Get, Param, ParseBoolPipe, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
 import User from 'src/entitys/user.entity';
 import JwtAuthGuard from './auth.guard';
 import AuthService from './auth.service';
@@ -11,7 +13,9 @@ import { Roles } from './roles-auth.decorator';
 export class UsersController {
 
     constructor(private authService:AuthService,
-        private basketService:BasketService){}
+        private basketService:BasketService,
+        private usersService:UsersService,
+        ){}
 
     @Post('login')
     login(@Body() dto:CreateUserDto){
@@ -67,6 +71,31 @@ export class UsersController {
             return this.basketService.deleteFromBasketByItem(req.user as User,id)
         }
         return this.basketService.deleteOneFromBasket(req.user as User,id)
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Roles('ADMIN')
+    @Get()
+    async getAllUsers(@Req() req,@Query('limit') limit:number,@Query('page') page:number,@Query('count') count:boolean){
+        const adminId=(req.user as User).id
+        if(count){
+            return this.usersService.getAllUsersCount()
+        }
+        return (await this.usersService.getAllUserWithBasketItemCount(limit,page)).filter((u)=>u.id!==adminId)
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Roles('ADMIN')
+    @Delete(':name')
+    deleteUserById(@Param('name') name:string){
+        return this.usersService.deleteUserById(name)
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Roles('ADMIN')
+    @Put()
+    updateUser(@Body() {id,...dto}:UpdateUserDto){
+        return this.usersService.updateUser(id,dto)
     }
 
 }

@@ -6,9 +6,8 @@ import { FindManyOptions, Repository } from 'typeorm';
 import { CategoryService } from './category.service';
 import { ItemsInfoService } from './item-info.service';
 import {v4} from 'uuid';
-import CreateItemInfoDto from './dto/create-itemInfo.dto';
-import CreateItemDto from './dto/create-item.dto';
-import { STATUS_CODES } from 'http';
+import CreateItemInfoDto from './dto/CreateItemInfo.dto';
+import CreateItemDto from './dto/CreateItem.dto';
 
 @Injectable()
 export class ItemsService {

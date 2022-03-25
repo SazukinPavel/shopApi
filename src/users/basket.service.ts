@@ -7,7 +7,7 @@ import { Item } from 'src/entitys/item.entity';
 import User from 'src/entitys/user.entity';
 import { FindManyOptions, Repository } from 'typeorm';
 import { v4 } from 'uuid';
-import BasketItemsCountDto from './dto/basket-items-count.dto';
+import BasketItemsCountDto from './dto/BasketItemsCount.dto';
 import CreateBasketItemDto from './dto/CreateBasketItemDto';
 
 @Injectable()
@@ -40,6 +40,12 @@ export default class BasketService {
     async addToBasket(user:User,dto:CreateBasketItemDto):Promise<BasketItem>{
         const basket=await this.findByUserOrCreate(user)
         return this.addItemToBasket(dto,basket)
+    }
+
+    async deleteBasketByUserId(id:string){
+        const basket=await this.baskets.findOne({where:{user:id}})
+        //await this.basketItems.delete({basket})
+        return this.baskets.delete(basket)
     }
 
     private deleteBasketItem(id:string){

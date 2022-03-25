@@ -1,3 +1,4 @@
+import { RoleType } from "src/users/roles-auth.decorator";
 import { Column, Entity, JoinColumn, OneToOne, PrimaryColumn } from "typeorm";
 import Basket from "./basket.entity";
 
@@ -14,9 +15,9 @@ export default class User{
     password:string
 
     @Column()
-    role:string
+    role:RoleType
 
-    @OneToOne(()=>Basket,basket=>basket.id)
+    @OneToOne(()=>Basket,basket=>basket.id,{cascade:true})
     @JoinColumn()
     basket:Basket | string
 

@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { CategoryService } from './category.service';
-import CreateItemDto from './dto/create-item.dto';
-import CreateItemInfoDto from './dto/create-itemInfo.dto';
+import CreateItemDto from './dto/CreateItem.dto';
+import CreateItemInfoDto from './dto/CreateItemInfo.dto';
 import { ItemsService } from './items.service';
 
 @Controller('items')

@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Category } from 'src/entitys/category.entity';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
-import CategoryWithCountDto from './dto/category-with-count.dto';
+import CategoryWithCountDto from './dto/CategoryWithCount.dto';
 import { ItemsService } from './items.service';
 
 @Injectable()

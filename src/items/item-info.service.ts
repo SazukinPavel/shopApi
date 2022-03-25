@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ItemInfo } from 'src/entitys/item-info.entity';
 import { Repository } from 'typeorm';
 import {v4} from 'uuid'
-import CreateItemInfoDto from './dto/create-itemInfo.dto';
+import CreateItemInfoDto from './dto/CreateItemInfo.dto';
 
 @Injectable()
 export class ItemsInfoService {
